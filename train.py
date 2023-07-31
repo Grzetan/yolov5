@@ -377,7 +377,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
             callbacks.run('on_fit_epoch_end', log_vals, epoch, best_fitness, fi)
 
             # Save model
-            if (not nosave) or (final_epoch and not evolve):  # if save
+            if True or (final_epoch and not evolve):  # if save
                 ckpt = {
                     'epoch': epoch,
                     'best_fitness': best_fitness,
@@ -389,14 +389,17 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                     'git': GIT_INFO,  # {remote, branch, commit} if a git repo
                     'date': datetime.now().isoformat()}
 
-                # Save last, best and delete
-                torch.save(ckpt, last)
-                if best_fitness == fi:
-                    torch.save(ckpt, best)
-                if opt.save_period > 0 and epoch % opt.save_period == 0:
-                    torch.save(ckpt, w / f'epoch{epoch}.pt')
+                torch.save(ckpt, w / f'../epoch{epoch}.pt')
+
+                # # Save last, best and delete
+                # torch.save(ckpt, last)
+                # if best_fitness == fi:
+                #     torch.save(ckpt, best)
+                # if opt.save_period > 0 and epoch % opt.save_period == 0:
+                #     torch.save(ckpt, w / f'epoch{epoch}.pt')
+                # del ckpt
+                # callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
                 del ckpt
-                callbacks.run('on_model_save', last, epoch, final_epoch, best_fitness, fi)
 
         # EarlyStopping
         if RANK != -1:  # if DDP training
